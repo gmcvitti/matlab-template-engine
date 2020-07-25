@@ -8,7 +8,6 @@ classdef TokenTypes
         LOOP
         CONDITIONAL
         END
-        COMMENT        
     end
     
     methods
@@ -21,12 +20,13 @@ classdef TokenTypes
                     expression = "\{\{\s*(?<value>\w+)\s*\}\}"; 
                 case "COMMENT"
                     expression = "\{\{\\!\-\-.*\-\-\}\}";
-                case "CONDITIONAL"
-                    expression = "\{\{\#\s*if\s+(?<value>\w+)\s*\}\}";
+                case "COND"
+                    expression = "\{\{\#\s*for\s+(?<element>\w+)\s*\=\s*(?<array>\w+)\s*\}\}";
                 case "LOOP"
-                    expression = "\{\{\#\s*for\s+(?<element>\w+)\s*\=\s*(?<array>\w+)\s*\}\}";  
-                case "END"
-                    expression = "\{\{\#\s*end\s*\}\}";
+                    expression = "\{\{\#\s*for\s+(?<element>\w+)\s*\=\s*(?<array>\w+)\s*\}\}";
+                    
+                    
+                    
                 otherwise            
                     error("Invalid tokentype");
             end

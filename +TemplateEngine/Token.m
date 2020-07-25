@@ -3,20 +3,25 @@ classdef Token
     %   Detailed explanation goes here
     
     properties
-        originalStr (1,1) string;
         position (1,1) uint64;
         length (1,1) uint64;
+        type (1,1) TemplateEngine.TokenTypes;
+        data (1,1) struct;
     end
     
     methods
-        function obj = Token(originalStr,position,length)
+        function obj = Token(type,data,position,length)
             %TOKEN Construct an instance of this class
             %   Detailed explanation goes here
-            obj.originalStr = originalStr;
+            obj.type = type;
+            obj.data = data;
             obj.position = position;
             obj.length = length;
-        end 
-        
+            
+        end  
     end
+    
+    
+    
 end
 
