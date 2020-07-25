@@ -1,0 +1,38 @@
+function str = templaterunner()
+%PREPROCESSOR Summary of this function goes here
+%   Detailed explanation goes here
+
+
+str = "Hello World {{ value }} from. {{#for a=A }} then {{#for a=A }}";
+valExpr = "(?<!\{)\{\{\s*(?<value>\w+)\s*\}\}";
+loopExpr = "(?<!\{)\{\{\#\s*for\s+(?<instance>\w+)\s*\=\s*(?<array>\w+)\s*\}\}";
+
+
+
+%[startIdx,endIdx,data,out] = regexp(str,valExpr,"start","end","names","split")
+
+
+[startIdx,endIdx,data,out] = regexp(str,loopExpr,"start","end","names","split")
+
+
+
+
+
+
+
+
+
+
+end
+
+
+
+
+
+function 
+
+
+
+
+
+

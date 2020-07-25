@@ -1,0 +1,21 @@
+classdef Token
+    %TOKEN Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        original (1,1) string;
+        position (1,1) uint64;
+        length (1,1) uint64;
+    end
+    
+    methods
+        function obj = Token(original)
+            %TOKEN Construct an instance of this class
+            %   Detailed explanation goes here
+            obj.type = type;
+            obj.value = value;
+        end 
+        
+    end
+end
+
