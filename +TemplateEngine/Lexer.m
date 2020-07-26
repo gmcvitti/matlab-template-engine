@@ -3,43 +3,44 @@ classdef Lexer < handle
     %   Detailed explanation goes here
     
     properties
-       templateStr (1,1) string = "";
-       position (1,1) uint64 = 0;
+       templateStr (1,1) string
+       templatePos (1,1) double = 0;
     end   
      
     
     methods
-        function obj = Lexer(templateStr)
+        function lexer = Lexer(templateStr)
             %LEXER Construct an instance of this class
             %   Detailed explanation goes here
-            obj.templateStr = templateStr;            
+            lexer.templateStr = templateStr;            
         end
         
-        function token = nextToken(obj)
-            %METHOD1 Summary of this method goes here
+        function token = nextToken(lexer)
+            %NEXTTOKEN Summary of this method goes here
             %   Detailed explanation goes here
             
-            % Return Empty if at end
-            if strlength(obj.templateStr) <= obj.position
+            % End of String
+            if lexer.templatePos == strlength(lexer.templateStr)
                 token = [];
                 return;
-            end
+            end   
             
-            % Find Next Tokem            
-            str = extractAfter(obj.templateStr,obj.position);
+            % Get the Remaining Template String         
+            str = extractAfter(lexer.templateStr,lexer.templatePos);
             
+            
+            % Get next complete token excluding TEXT
             token = [];
-            tokenPos = strlength(str);
+            tokenPos = inf;
                                     
             for tokenType = string(enumeration("TemplateEngine.TokenTypes"))'   
                 
-                if tokenType == "TEXT"
+                if tokenType == "TEXT"                    
                     continue;
                 end                  
                         
-                [startPos,endPos,data] = regexp(...
-                    str,TemplateEngine.TokenTypes.(tokenType).getExpression(),...
-                    "start","end","names","once");
+                expression = TemplateEngine.TokenTypes.(tokenType).getExpression();
+                [startPos,endPos,data] = regexp(str,expression,"start","end","names","once");
                 
                 if isempty(startPos)
                     continue;
@@ -48,22 +49,23 @@ classdef Lexer < handle
                 if startPos < tokenPos
                     tokenPos = startPos;
                     token = TemplateEngine.Token(...
-                        TemplateEngine.TokenTypes.(tokenType),data,...
-                        obj.position+startPos,endPos-startPos+1);
+                        tokenType,data,...
+                        lexer.templatePos+startPos,endPos-startPos+1);
                 end                        
             end 
             
+                        
             % Return Text Token If Text Preceeds Other Tokens
-            if tokenPos > 1                
-                data = struct("text",extractBetween(str,1,tokenPos,"Boundaries","inclusive"));
-                
-                token = TemplateEngine.Token(...
-                        TemplateEngine.TokenTypes.TEXT,data,...
-                        obj.position+1,tokenPos-1);
+            if tokenPos == inf                
+                data = struct("text",str);
+                token = TemplateEngine.Token("TEXT",data,lexer.templatePos+1,strlength(str));
+            elseif tokenPos > 1
+                data = struct("text",extractBefore(str,tokenPos));
+                token = TemplateEngine.Token("TEXT",data,lexer.templatePos+1,tokenPos-1);
             end            
-            
+                        
             % Update Position in Lexer
-            obj.position = obj.position + token.length;            
+            lexer.templatePos = lexer.templatePos + token.length;            
         end
         
 

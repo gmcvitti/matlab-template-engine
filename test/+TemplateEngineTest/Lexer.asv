@@ -4,20 +4,60 @@ classdef Lexer < matlab.unittest.TestCase
     
     methods (Test)
         function LexerEmptyString(testCase)
-            %TLEXER Construct an instance of this class
-            %   Detailed explanation goes here
             
             str = "";
             lexer = TemplateEngine.Lexer(str);
-            testCase.verifyEmpty(lexer.nextToken());            
+            testCase.verifyEmpty(lexer.nextToken());
             
         end
         
         function LexerTextOnlyToken(testCase)
-            str = "Hello ";
+            str = "Hello World";
             lexer = TemplateEngine.Lexer(str);
-            testCase.verifyEmpty(lexer.nextToken()); 
+            
+            token = lexer.nextToken();
+            testCase.verifyClass(token,"TemplateEngine.Token");
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.TEXT);
+            testCase.verifyEqual(token.data.text,"Hello World");
+            testCase.verifyEqual(token.length,11);
+            testCase.verifyEmpty(lexer.nextToken());
+            
         end
+        
+        function LexerValueOnlyToken(testCase)
+            str = "{{ value }}";
+            lexer = TemplateEngine.Lexer(str);
+            
+            token = lexer.nextToken();
+            testCase.verifyClass(token,"TemplateEngine.Token");
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
+            testCase.verifyEqual(token.data.value,"value");
+            testCase.verifyEqual(token.length,11);
+            testCase.verifyEmpty(lexer.nextToken());
+            
+        end
+        
+        function LexerValueAndTextToken(testCase)
+            str = "Hello {{ value }}";
+            lexer = TemplateEngine.Lexer(str);
+            
+            token = lexer.nextToken();
+            
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.TEXT);
+            testCase.verifyEqual(token.data.text,"Hello ");
+            testCase.verifyEqual(token.length,6);
+            
+            token = lexer.nextToken();
+            
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
+            testCase.verifyEqual(token.data.value,"value");
+            testCase.verifyEqual(token.length,11));
+                             
+            testCase.verifyEmpty(lexer.nextToken());
+            
+        end
+        
+        
         
         
     end
