@@ -1,69 +1,17 @@
-function str = templaterunner()
+
 %PREPROCESSOR Summary of this function goes here
 %   Detailed explanation goes here
 
+T = TemplateEngine.TemplateEngine();
 
-str = "Hello World {{ value }} from. {{#for a=A }}. then {{#for a=A }} {{ value }}";
+T.l = "Hello World";
+T.l = "Maybe Works";
 
-
-
-% [valueExpression,out] = getValueExpressions(str)
-
-% [loopExpression,out] = getLoopExpressions(str)
-
-
-
-[posStart,posEnd,names] = regexp(str,"(?<!\{)\{\{\s*(?<value>\w+)\s*\}\}","start","end","names")
-
-
-
-
+for i = 1:15
+T.l = "   " + i + ". Entry"; 
 end
 
-
-%{
-
-
-function [valueExpression,out] = getValueExpressions(str)
-
-valueRegExpr = "(?<!\{)\{\{\s*(?<value>\w+)\s*\}\}";
-
-[startIdx,endIdx,data,out] = regexp(str,valueRegExpr,"start","end","names","split");
-
-for i = 1:numel(data)
-    valueExpression(i) = data(1,i);
-    valueExpression(i).pos = [startIdx(i), endIdx(i)];
-end
-
-end
+T.l = "end";
 
 
-function [loopExpression,out] = getLoopExpressions(str)
-
-loopRegExpr = "(?<!\{)\{\{\#\s*for\s+(?<instance>\w+)\s*\=\s*(?<array>\w+)\s*\}\}";
-
-[startIdx,endIdx,data,out] = regexp(str,loopRegExpr,"start","end","names","split");
-
-for i = 1:numel(data)
-    loopExpression(i) = struct(...
-        "data",data(1,i),...
-        "position",[startIdx(i), endIdx(i)]);
-end
-
-end
-
-
-
-
-
-
-function [token,str] = getToken(str,
-
-
-
-
-
-
-end
-
-%}
+T.render()
