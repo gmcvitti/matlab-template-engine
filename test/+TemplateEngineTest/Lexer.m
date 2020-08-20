@@ -117,6 +117,20 @@ classdef Lexer < matlab.unittest.TestCase
         end
         
         
+        function LexerNewlineOnlyToken(testCase)
+            str = newline;
+            lexer = TemplateEngine.Lexer(str);
+            
+            token = lexer.nextToken();
+            testCase.verifyClass(token,"TemplateEngine.Token");
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.NEWLINE);
+            testCase.verifyEmpty(fieldnames(token.data));            
+            testCase.verifyEqual(token.length,uint64(1));
+            testCase.verifyEmpty(lexer.nextToken());
+            
+        end
+        
+        
     end
 end
 

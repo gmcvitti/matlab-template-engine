@@ -8,6 +8,7 @@ classdef TokenTypes
         LOOP
         CONDITIONAL
         END
+        NEWLINE
         COMMENT        
     end
     
@@ -26,6 +27,8 @@ classdef TokenTypes
                         "?<text>.*?(?=" + encapsulation.comment(1) + ")|" + ...
                         "?<text>.*?(?=" + encapsulation.expression(1) + ")|" + ...
                         "?<text>.*)";
+                case "NEWLINE"
+                    expression = "(\r\n|\r|\n)";                    
                 case "VALUE"     
                     expression = ...
                         encapsulation.value(1) + ...
