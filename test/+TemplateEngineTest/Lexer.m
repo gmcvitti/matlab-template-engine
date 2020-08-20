@@ -19,7 +19,7 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyClass(token,"TemplateEngine.Token");
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.TEXT);
             testCase.verifyEqual(token.data.text,"Hello World");
-            testCase.verifyEqual(token.length,11);
+            testCase.verifyEqual(token.length,uint64(11));
             testCase.verifyEmpty(lexer.nextToken());
             
         end
@@ -32,7 +32,7 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyClass(token,"TemplateEngine.Token");
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
             testCase.verifyEqual(token.data.value,"value");
-            testCase.verifyEqual(token.length,11);
+            testCase.verifyEqual(token.length,uint64(11));
             testCase.verifyEmpty(lexer.nextToken());
             
         end
@@ -45,13 +45,13 @@ classdef Lexer < matlab.unittest.TestCase
             
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.TEXT);
             testCase.verifyEqual(token.data.text,"Hello ");
-            testCase.verifyEqual(token.length,6);
+            testCase.verifyEqual(token.length,uint64(6));
             
             token = lexer.nextToken();
             
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
             testCase.verifyEqual(token.data.value,"value");
-            testCase.verifyEqual(token.length,11);
+            testCase.verifyEqual(token.length,uint64(11));
                              
             testCase.verifyEmpty(lexer.nextToken());
             
@@ -65,20 +65,20 @@ classdef Lexer < matlab.unittest.TestCase
             
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
             testCase.verifyEqual(token.data.value,"value");
-            testCase.verifyEqual(token.length,11);
+            testCase.verifyEqual(token.length,uint64(11));
             
             token = lexer.nextToken();
             
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.TEXT);
             testCase.verifyEqual(token.data.text," world");
-            testCase.verifyEqual(token.length,6);
+            testCase.verifyEqual(token.length,uint64(6));
                                         
             testCase.verifyEmpty(lexer.nextToken());
             
         end
         
         function LexerLoopOnlyToken(testCase)
-            str = "{{# for one = many }}";
+            str = "{{# foreach one in many }}";
             lexer = TemplateEngine.Lexer(str);
             
             token = lexer.nextToken();
@@ -86,7 +86,7 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.LOOP);
             testCase.verifyEqual(token.data.element,"one");
             testCase.verifyEqual(token.data.array,"many");
-            testCase.verifyEqual(token.length,21);
+            testCase.verifyEqual(token.length,uint64(26));
             testCase.verifyEmpty(lexer.nextToken());
             
         end
@@ -98,7 +98,7 @@ classdef Lexer < matlab.unittest.TestCase
             token = lexer.nextToken();
             testCase.verifyClass(token,"TemplateEngine.Token");
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.END);            
-            testCase.verifyEqual(token.length,11);
+            testCase.verifyEqual(token.length,uint64(11));
             testCase.verifyEmpty(lexer.nextToken());
             
         end
@@ -111,7 +111,7 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyClass(token,"TemplateEngine.Token");
             testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.CONDITIONAL);
             testCase.verifyEqual(token.data.condition,"true");
-            testCase.verifyEqual(token.length,14);
+            testCase.verifyEqual(token.length,uint64(14));
             testCase.verifyEmpty(lexer.nextToken());
             
         end
