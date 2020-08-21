@@ -3,7 +3,7 @@ classdef AbstractSyntaxTree < handle
     %   Detailed explanation goes here
     
     properties
-        dg (1,1) digraph = digraph();
+        graph (1,1) graph = graph();
     end
     
     methods
@@ -14,10 +14,11 @@ classdef AbstractSyntaxTree < handle
         end
         
         
-        function add
+        % APPEND
         
         
-        end
+        
+        
     end
 end
 

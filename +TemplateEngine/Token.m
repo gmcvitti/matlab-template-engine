@@ -7,6 +7,7 @@ classdef Token
         data (1,1) struct;    
         pos (1,1) uint64;
         length (1,1) uint64;
+        group (1,1) uint64;
     end
     
     methods
