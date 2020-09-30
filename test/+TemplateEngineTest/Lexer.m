@@ -101,6 +101,15 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyEqual(token.length,uint64(11));
             testCase.verifyEmpty(lexer.nextToken());
             
+            str = "{{#end }}";
+            lexer = TemplateEngine.Lexer(str);
+            
+            token = lexer.nextToken();
+            testCase.verifyClass(token,"TemplateEngine.Token");
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.END);            
+            testCase.verifyEqual(token.length,uint64(9));
+            testCase.verifyEmpty(lexer.nextToken());
+            
         end
         
         function LexerCondOnlyToken(testCase)
@@ -127,8 +136,33 @@ classdef Lexer < matlab.unittest.TestCase
             testCase.verifyEmpty(fieldnames(token.data));            
             testCase.verifyEqual(token.length,uint64(1));
             testCase.verifyEmpty(lexer.nextToken());
+        end
+        
+        
+        function LexerValueThenEndToken(testCase)
+            str = "{{value}}{{#end}}";
+            lexer = TemplateEngine.Lexer(str);
+            
+            token = lexer.nextToken();
+            
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.VALUE);
+            testCase.verifyEqual(token.data.value,"value");
+            testCase.verifyEqual(token.length,uint64(9));
+            
+            token = lexer.nextToken();
+            
+            testCase.verifyEqual(token.type,TemplateEngine.TokenTypes.END);
+            testCase.verifyEqual(token.length,uint64(8));
+                                        
+            testCase.verifyEmpty(lexer.nextToken());
             
         end
+        
+        
+        
+        
+        
+        
         
         
     end
