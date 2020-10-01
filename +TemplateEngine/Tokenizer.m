@@ -4,7 +4,7 @@ classdef Tokenizer < handle
     
     properties
         template (1,1) string;
-        encapsulation (1,1) TemplateEngine.Encapsulation;
+        encap (1,1) TemplateEngine.Encapsulation;
     end
           
     methods

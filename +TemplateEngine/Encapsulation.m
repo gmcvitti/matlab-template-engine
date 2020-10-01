@@ -2,59 +2,48 @@ classdef Encapsulation < handle
     %ENCAPSULATION Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties (SetAccess = private)       
-        
-        value (1,2) pattern = [...
-            pattern("{{") + optionalPattern(whitespacePattern),...
-            optionalPattern(whitespacePattern) + pattern("}}")];
-        expression (1,2) pattern = [...
-            pattern("{{#") + optionalPattern(whitespacePattern),...
-            optionalPattern(whitespacePattern) + pattern("}}")];
-        comment (1,2) pattern = [...
-            pattern("{{!--") + optionalPattern(whitespacePattern),...
-            optionalPattern(whitespacePattern) + pattern("--}}")];
-        
+    properties (SetAccess = private)  
+        value (1,2) pattern = pattern(["{{","}}"]);
+        expression (1,2) pattern = pattern(["{{#","}}"]);
+        comment (1,2) pattern = pattern(["{{!--","--}}"]);
     end
     
     methods
         
-        function setValue(encapsulation,str)
+        function setValue(encapsulation,pat)
             
             arguments
                 encapsulation (1,1) TemplateEngine.Encapsulation
-                str (1,2) string
+                pat (1,2) pattern
             end
             
-            assert(...
-                (str(1) ~= encapsulation.expression(1)) || (str(1) ~= encapsulation.comment(1)),...
-                "Value encapsulation must be unique");
-            encapsulation.value = str;
+            assert(pat(1) ~= encapsulation.expression(1),"Value encapsulation must be unique");
+            assert(pat(1) ~= encapsulation.comment(1),"Value encapsulation must be unique");
+            encapsulation.value = pat;
         end   
         
-        function setExpression(encapsulation,str)
+        function setExpression(encapsulation,pat)
             
             arguments
                 encapsulation (1,1) TemplateEngine.Encapsulation
-                str (1,2) string
+                pat (1,2) pattern
             end
             
-            assert(...
-                (str(1) ~= encapsulation.value(1)) || (str(1) ~= encapsulation.comment(1)),...
-                "Expression encapsulation must be unique");
-            encapsulation.expression = str;
+            assert(pat(1) ~= encapsulation.value(1),"Value encapsulation must be unique");
+            assert(pat(1) ~= encapsulation.comment(1),"Value encapsulation must be unique");
+            encapsulation.expression = pat;
         end  
         
-        function setComment(encapsulation,str)
+        function setComment(encapsulation,pat)
             
             arguments
                 encapsulation (1,1) TemplateEngine.Encapsulation
-                str (1,2) string
+                pat (1,2) pattern
             end
             
-            assert(...
-                (str(1) ~= encapsulation.value(1)) || (str(1) ~= encapsulation.expression(1)),...
-                "Expression encapsulation must be unique");
-            encapsulation.comment = str;
+            assert(pat(1) ~= encapsulation.value(1),"Value encapsulation must be unique");
+            assert(pat(1) ~= encapsulation.expression(1),"Value encapsulation must be unique");
+            encapsulation.comment = pat;
         end  
         
     end

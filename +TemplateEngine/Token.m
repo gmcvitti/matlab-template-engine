@@ -4,26 +4,22 @@ classdef Token
     
     properties 
         type (1,1) TemplateEngine.TokenTypes;
-        data (1,1) struct;    
-        pos (1,1) uint64;
-        length (1,1) uint64;
-        group (1,1) uint64;
+        data (1,1) struct; 
+        str (1,1) string;
     end
     
     methods
-        function token = Token(type,data,pos,length)
+        function token = Token(type,data,str)
             
             arguments
                 type (1,1) TemplateEngine.TokenTypes;
                 data (1,1) struct; 
-                pos (1,1) uint64;
-                length (1,1) uint64;
+                str (1,1) string;
             end
                         
             token.type = type;
             token.data = data;
-            token.pos = pos;
-            token.length = length;
+            token.str = str;
         end  
     end
     
