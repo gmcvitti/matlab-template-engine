@@ -2,10 +2,18 @@ classdef Encapsulation < handle
     %ENCAPSULATION Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties (SetAccess = private)
-        value (1,2) string = ["\{\{","\}\}"];
-        expression (1,2) string = ["\{\{\#","\}\}"];
-        comment (1,2) string = ["\{\{\!\-\-","\-\-\}\}"];
+    properties (SetAccess = private)       
+        
+        value (1,2) pattern = [...
+            pattern("{{") + optionalPattern(whitespacePattern),...
+            optionalPattern(whitespacePattern) + pattern("}}")];
+        expression (1,2) pattern = [...
+            pattern("{{#") + optionalPattern(whitespacePattern),...
+            optionalPattern(whitespacePattern) + pattern("}}")];
+        comment (1,2) pattern = [...
+            pattern("{{!--") + optionalPattern(whitespacePattern),...
+            optionalPattern(whitespacePattern) + pattern("--}}")];
+        
     end
     
     methods

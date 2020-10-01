@@ -3,64 +3,66 @@ classdef Tokenizer < handle
     %   Detailed explanation goes here
     
     properties
-        template (1,1) string = "";
+        template (1,1) string;
+        encapsulation (1,1) TemplateEngine.Encapsulation;
     end
-    
-    properties
-        tokens (1,:) string = string.empty();
-        pos (1,1) double = 1;
-    end
-    
-    properties
-        exprEncapsulation = ["{{#","}}"];
-        valueEncapsulation = ["{{","}}"];   
-    end
-    
+          
     methods
-        function tokenizer = Tokenizer(template)
+        function tokenizer = Tokenizer(encapsulation)
             %TOKENIZER Construct an instance of this class
             %   Detailed explanation goes here
             arguments
+                encapsulation (1,1) TemplateEngine.Encapsulation = TemplateEngine.Encapsulation();
+            end
+            
+            tokenizer.encapsulation = encapsulation;   
+        end
+        
+        
+        function addTemplate(tokenizer,template)
+            arguments
+                tokenizer (1,1) TemplateEngine.Tokenizer
                 template (1,1) string
             end            
             
-            tokenizer.template = template;
-        end
-        
-   
-        
+            tokenizer.template = template;            
+        end        
         
         
         function token = nextToken(tokenizer)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             
-            localTemplate = extractAfter(tokenizer.template,tokenizer.pos-1); 
+            if strlength(tokenizer.template) == 0
+               token = string.empty();
+               return;
+            end
+            
             
             switch true
-                case startsWith(localTemplate,tokenizer.expression)
+                case startsWith(tokenizer.template,tokenizer.expression)
                     
-                    token = extract(localTemplate,tokenizer.expression);
-                    token = token(1);                    
-                    tokenizer.pos = tokenizer.pos + strlength(token); 
+                    token = extract(tokenizer.template,tokenizer.expression);
+                    token = token(1);                            
+                    tokenizer.template = extractAfter(tokenizer.template,token);
                 
-                case startsWith(localTemplate,tokenizer.value)
+                case startsWith(tokenizer.template,tokenizer.value)
                     
-                    token = extract(localTemplate,tokenizer.value);
-                    token = token(1);                    
-                    tokenizer.pos = tokenizer.pos + strlength(token);
+                    token = extract(tokenizer.template,tokenizer.value);
+                    token = token(1);                            
+                    tokenizer.template = extractAfter(tokenizer.template,token);
                     
-                case startsWith(localTemplate,newline)                    
+                case startsWith(tokenizer.template,tokenizer.newline)                    
                     
-                    token = extract(localTemplate,newline);
-                    token = token(1);                    
-                    tokenizer.pos = tokenizer.pos + strlength(token);
+                    token = extract(tokenizer.template,tokenizer.newline);
+                    token = token(1);                            
+                    tokenizer.template = extractAfter(tokenizer.template,token);
                     
-                case startsWith(localTemplate,tokenizer.text)
+                case startsWith(tokenizer.template,tokenizer.text)
                     
-                    token = extract(localTemplate,tokenizer.text);
-                    token = token(1);                    
-                    tokenizer.pos = tokenizer.pos + strlength(token);
+                    token = extract(tokenizer.template,tokenizer.text);
+                    token = token(1);                            
+                    tokenizer.template = extractAfter(tokenizer.template,token);
                     
             end
                                               
@@ -71,24 +73,27 @@ classdef Tokenizer < handle
         
         function pat = expression(tokenizer)
             pat = ...
-                tokenizer.exprEncapsulation(1) + ...
-                wildcardPattern(1,inf,"Except",tokenizer.exprEncapsulation(2)) + ...
-                tokenizer.exprEncapsulation(2);  
+                tokenizer.encapsulation.expression(1) + ...
+                wildcardPattern(1,inf,"Except",tokenizer.encapsulation.expression(2)) + ...
+                tokenizer.encapsulation.expression(2);  
         end
         
         function pat = value(tokenizer)
             pat = ...
-                tokenizer.valueEncapsulation(1) + ...
-                wildcardPattern(1,inf,"Except",tokenizer.valueEncapsulation(2)) + ...
-                tokenizer.valueEncapsulation(2);
+                tokenizer.encapsulation.value(1) + ...
+                wildcardPattern(1,inf,"Except",tokenizer.encapsulation.value(2)) + ...
+                tokenizer.encapsulation.value(2);
         end
         
         function pat = text(tokenizer)
-            exceptPat = pattern(tokenizer.valueEncapsulation(1)|tokenizer.exprEncapsulation(1)|newline);
+            exceptPat = pattern(tokenizer.encapsulation.value(1)|tokenizer.encapsulation.expression(1)|newline);
             pat = ...
                 asManyOfPattern(wildcardPattern(1,inf,"Except",exceptPat));
         end
         
+        function pat = newline(tokenizer)
+            pat = pattern(newline);
+        end
         
         
     end

@@ -3,121 +3,85 @@ classdef Lexer < handle
     %   Detailed explanation goes here
     
     properties
-       templateStr (1,1) string
-       templateStrPos (1,1) uint64 = 1;
+       template (1,1) string
+       tokenizer (1,1) TemplateEngine.Tokenizer = TemplateEngine.Tokenizer();
+       tokens (1,:) string = string.empty();
+       pos (1,1) double = 1;
     end   
      
     
     methods
-        function lexer = Lexer(templateStr)
+        function lexer = Lexer(template)
             %LEXER Construct an instance of this class
             %   Detailed explanation goes here
-            lexer.templateStr = templateStr;       
-            lexer.templateStrPos = 1;
+            lexer.template = template; 
         end
+        
+        
+        function tokenize(lexer)            
+            
+            lexer.tokenizer.addTemplate(lexer.template);            
+            while true
+                token = lexer.tokenizer.nextToken();
+                if isempty(token)
+                    return;
+                else
+                    lexer.tokens(end+1) = token;
+                end
+            end            
+        end     
         
         function token = nextToken(lexer)
-            
             arguments
-                lexer (1,1) TemplateEngine.Lexer
+               lexer (1,1) TemplateEngine.Lexer 
             end
             
-            if lexer.templateStrPos > strlength(lexer.templateStr)
-                token = TemplateEngine.Token.empty(0);
-                return;
-            end
-                                                   
-            candidateTokens = [...
-                lexer.nextCandidateToken("LOOP");...
-                lexer.nextCandidateToken("CONDITIONAL");...
-                lexer.nextCandidateToken("COMMENT");...
-                lexer.nextCandidateToken("END");...
-                lexer.nextCandidateToken("VALUE");...
-                lexer.nextCandidateToken("NEWLINE")];                      
-                       
-            [~,idx] = min([candidateTokens.pos]);            
+            token = lexer.tokens(lexer.pos);
             
-            if isempty(idx)
-                text = extractBetween(...
-                    lexer.templateStr,...
-                    lexer.templateStrPos,strlength(lexer.templateStr),...
-                    "Boundaries","inclusive"); 
-                data = struct("text",text);
+            switch true
+                case sta  (str,lexer.loopPattern)
+                    
+                case matches(str,lexer.conditionalPattern)
                 
-                token = TemplateEngine.Token("TEXT",data,...
-                    lexer.templateStrPos,strlength(data.text));
-                lexer.templateStrPos = lexer.templateStrPos + strlength(lexer.templateStr);
-                return;
-            end
-                        
-            if candidateTokens(idx).pos == lexer.templateStrPos
-                token = candidateTokens(idx);
-                lexer.templateStrPos = lexer.templateStrPos + token.length;
-                return;
-            end
-            
-            
-            nextClosestToken = candidateTokens(idx);
-            startPos = lexer.templateStrPos;
-            endPos = nextClosestToken.pos-1;
-            
-            text = extractBetween(...
-                    lexer.templateStr,startPos,endPos,...
-                    "Boundaries","inclusive");
-            data = struct("text",text);
-            
-            token = TemplateEngine.Token("TEXT",data,startPos,strlength(text));
-            lexer.templateStrPos = endPos + 1;
+                
+                
+                otherwise
+                    % Error condition
+                
+                
+                
+            end                       
             
         end
         
-                
-        function token = nextCandidateToken(lexer,tokenType) 
+        function pat = patternIdentifier(lexer,type)
             
             arguments
                 lexer (1,1) TemplateEngine.Lexer
-                tokenType (1,1) TemplateEngine.TokenTypes
+                type (1,1) TempalteEngine.TokenTypes
             end
             
-            str = extractBetween(...
-                lexer.templateStr,...
-                lexer.templateStrPos,strlength(lexer.templateStr),...
-                "Boundaries","inclusive");           
-                   
-            [startPos,endPos,data] = ...
-                regexp(str,getExpression(tokenType),"start","end","names","once");
-                        
-            if isempty(startPos)
-                token = TemplateEngine.Token.empty(0);
-            else
-                token = TemplateEngine.Token(tokenType,data,...
-                    startPos+lexer.templateStrPos-1,1+endPos-startPos);
+            switch type
+                case "LOOP"
+                    pat = ...
+                        lexer.tokenizer.exprEncapsulation(1) + ...
+                        optionalPattern(whitespacePattern) + ...
+                        pattern("for") + whitespacePattern;
+                case "CONDITIONAL"
+                    pat = ...
+                        lexer.tokenizer.exprEncapsulation(1) + ...
+                        optionalPattern(whitespacePattern) + ...
+                        pattern("if") + whitespacePattern;
+                    
             end
-            
-        end        
-        
-        function token = nextCandidateTextToken(lexer,length)
-            arguments
-                lexer (1,1) TemplateEngine.Lexer
-                length (1,1) uint64
-            end
-            
-            if strlength(lexer.templateStr) == lexer.templateStrPos
-                token = TemplateEngine.Token.empty(0);
-            end
-            
-            str = extractBetween(...
-                lexer.templateStr,...
-                lexer.templateStrPos,lexer.templateStrPos+length,...
-                "Boundaries","inclusive"); 
-            
-            data = struct("text",str);
-            
-            token = TemplateEngine.Token("TEXT",data,lexer.templateStrPos,lexer.templateStrPos+length-1);            
-            
         end
         
-
+        
+        
+        
+        
     end
+        
+        
 end
 
