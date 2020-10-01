@@ -125,7 +125,7 @@ classdef TokenTypes
                     
                 case "VALUE"
                     % {{ x }}
-                    substr = extractBetween(str,encapsulation.expression(1),encapsulation.expression(2));
+                    substr = extractBetween(str,encapsulation.value(1),encapsulation.value(2));
                     substr = erase(substr,whitespacePattern);
                     data = struct("value",substr);
                     

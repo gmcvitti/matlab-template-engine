@@ -37,7 +37,7 @@ classdef Node
                 case "LOOP"
                     [node.child,tokens] = TemplateEngine.Node(tokens);  
                     [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "CONDITIONAL"    
+                case "CONDITION"    
                     [node.child,tokens] = TemplateEngine.Node(tokens);  
                     [node.next,tokens] = TemplateEngine.Node(tokens);
                 case "TEXT"
@@ -61,6 +61,8 @@ classdef Node
                 data (1,1) struct
             end
             
+            node
+            
             str = "";
             
             if isempty(node)
@@ -81,8 +83,8 @@ classdef Node
                         str = str + evaluate(node.child,data);
                     end
                     
-                case "CONDITIONAL"
-                    if data.(node.token.data.condition)
+                case "CONDITION"
+                    if data.(node.token.data.cond)
                         str = str + evaluate(node.child,data);
                     end
                     
