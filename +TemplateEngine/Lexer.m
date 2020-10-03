@@ -53,8 +53,10 @@ classdef Lexer < handle
                     token = extractToken(lexer,"NEWLINE"); 
                     
                 case startsWith(lexer.template,TemplateEngine.TokenTypes.getPattern("TEXT"))
-                    token = extractToken(lexer,"TEXT"); 
+                    token = extractToken(lexer,"TEXT");
                     
+                otherwise
+                    error("Unknown sequence type.");                    
             end
                                               
             

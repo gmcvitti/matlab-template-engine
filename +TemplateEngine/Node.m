@@ -59,9 +59,7 @@ classdef Node
             arguments
                 node (1,1) TemplateEngine.Node
                 data (1,1) struct
-            end
-            
-            node
+            end            
             
             str = "";
             
@@ -113,22 +111,13 @@ classdef Node
                 node (1,1) TemplateEngine.Node
             end
             
-            persistent num 
-            if isempty(num)
-                num = 1;
-            end
-            
             persistent depth
             if isempty(depth)
                 depth = 0;
             end         
             
-            str = pad(string(node.token.type),strlength(string(node.token.type)) + depth*4,'left');     
-                            
+            str = pad(string(node.token.type),strlength(string(node.token.type)) + depth*4,'left');                                 
             disp(str);            
-            
-            % disp(string(num) + " -- " + string(node.token.type))
-            % num = num+1;
                         
             if ~isempty(node.child) 
                 depth = depth + 1;

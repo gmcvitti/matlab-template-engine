@@ -1,9 +1,9 @@
 
 %% String Array
 A = "Hello {{A}}, " + ...
-    "{{# for x = X}}" + newline + ...
+    "{{# for x = X}}" + ...
     "{{#if B}}" + ...
-    "{{  x  }}" + ...
+    "{{  x  }}" + newline + ...
     "{{#end}}" + newline + ...
     "{{#for y = Y}}" + ...
     "{{y}}" + ...
@@ -16,7 +16,7 @@ lexer = TemplateEngine.Lexer(A);
 
 % Assemble Token List
 tokens = TemplateEngine.Token.empty();
-for i = 1:25
+while true
     token = lexer.nextToken();
     if isempty(token)
         break;
@@ -26,12 +26,30 @@ for i = 1:25
 end   
 
 
+%% Token Cleanup
+idx = ones(size(tokens));
+
+for i = 1:numel(tokens)-2
+    
+    token = tokens(i);
+
+   if token.type == "NEWLINE"
+       if tokens(i+1).type == "LOOP" || tokens(i+1).type == "CONDITION" || tokens(i+1).type == "END"
+           if tokens(i+2).type == "NEWLINE"
+               idx(i) = false;            
+           end
+       end
+   end
+end
+
+tokens = tokens(logical(idx));
+
 
 %% Data
 data = struct(...
     "A","world",...
     "X",["A","B","C"],...
-    "B",false,...
+    "B",true,...
     "Y",["D","E"]);
 
 
@@ -39,4 +57,9 @@ data = struct(...
 %% Sort Nodes
 node = TemplateEngine.Node(tokens);
 
+
+
+
+
+%% 
 
