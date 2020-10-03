@@ -47,9 +47,10 @@ classdef Engine < handle
             end     
             
             % Construct DiGraph
+            engine.renderTree = digraph();
             engine.renderTree = engine.renderTree.addnode(numel(engine.tokens));                
                     
-            
+            engine.buildGraph(1);
             
             
             
@@ -68,49 +69,51 @@ classdef Engine < handle
         end
         
         
-        function tokens = buildGraph(engine,tokens)
+        function node = buildGraph(engine,node)
             arguments
                 engine (1,1) TemplateEngine.Engine
-                tokens (1,:) TemplateEngine.Token                
+                node (1,1) double                
+            end
+            disp(node)
+            
+            if node == numel(engine.tokens)
+                return; % Last Node
             end
             
-            engine.renderTree = engine.renderTree.addnode(1);
-            
-            
-            
-            
-            node.token = tokens(1);
-            
-            
-            if numel(tokens) == 1
-                return;
-            else
-                tokens = tokens(2:end);
+            if engine.tokens(node+1).type == "END"
+                return
             end
             
-            if tokens(1).type == "END"
-                return;
-            end            
-                     
-            switch node.token.type
+            switch engine.tokens(node).type
                 case "LOOP"
-                    [node.child,tokens] = TemplateEngine.Node(tokens);  
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
+                    engine.renderTree = engine.renderTree.addedge(node,node+1,2);
+                    nodeN = buildGraph(engine,node+1);
+                    nodeN = nodeN+1;
+                                        
                 case "CONDITION"    
-                    [node.child,tokens] = TemplateEngine.Node(tokens);  
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "TEXT"
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "VALUE"
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "NEWLINE"
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "COMMENT"
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
-                case "END"
-                    [node.next,tokens] = TemplateEngine.Node(tokens);
+                    engine.renderTree = engine.renderTree.addedge(node,node+1,2);
+                    nodeN = buildGraph(engine,node+1); 
+                    nodeN = nodeN+1;
+                    
+%                 case "TEXT"
+%                     node = buildGraph(engine,node);
+%                 case "VALUE"
+%                     node = buildGraph(engine,node);
+%                 case "NEWLINE"
+%                     node = buildGraph(engine,node);
+%                 case "COMMENT"
+%                     node = buildGraph(engine,node);
+%                 case "END"
+%                     node = buildGraph(engine,node);
+                otherwise
+                    nodeN = node+1;
+                    
             end
-              
+            
+            
+            engine.renderTree = engine.renderTree.addedge(node,nodeN,1);
+            node = buildGraph(engine,nodeN);
+            
             
         end
         
